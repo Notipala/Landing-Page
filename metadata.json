@@ -1,0 +1,6 @@
+{
+  "name": "Notipala",
+  "description": "Next-generation developer utility and tactile notification platform built with liquid precision and bento layouts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
