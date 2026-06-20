@@ -1,6 +1,6 @@
 {
   "name": "Notipala",
-  "description": "Next-generation developer utility and tactile notification platform built with liquid precision and bento layouts.",
+  "description": "A connected knowledge workspace for organizing notes, documents, conversations, and ideas into a searchable system.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

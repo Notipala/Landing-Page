@@ -1,20 +1,40 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Notipala
 
-# Landing-Page-for-Notipala.
+Notipala is a landing page for a connected knowledge workspace. It presents a product concept for turning scattered notes, documents, PDFs, websites, and conversations into a searchable system that helps users find context, connect ideas, and build on their knowledge over time.
 
-Landing Page for Notipala.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/86fb6bdb-e29e-4bdd-8eca-6c06c450629d
+- Responsive landing page built with React, Vite, and TypeScript
+- Interactive knowledge query simulator
+- Sections for product benefits, use cases, milestones, and workspace previews
+- Light and dark theme support
+- Animated UI details for a polished product feel
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Motion
+- Lucide React
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
-
+**Prerequisites:** Node.js
 
 1. Install dependencies:
-   `npm install`
+
+   ```bash
+   npm install
+   ```
+
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+
 3. Run the app:
-   `npm run dev`
+
+   ```bash
+   npm run dev
+   ```
+
+4. Open the local URL shown in your terminal.
