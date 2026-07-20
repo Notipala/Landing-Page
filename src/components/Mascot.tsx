@@ -28,8 +28,8 @@ export default function Mascot() {
         <img
           alt="Notipala Mascot"
           className="w-full max-w-[450px] md:max-w-[480px] h-auto drop-shadow-[0_25px_35px_rgba(45,100,130,0.25)] select-none"
-          referrerPolicy="no-referrer"
-          src="https://lh3.googleusercontent.com/aida/AP1WRLuS_DeQSrEcRqWq-fXZ1IA8wrAJ7H3KxIkePoSjZPkEOnlNXh4w-YyNKcapRKZcCxERV9-LmM2S4uME98WPJvpN8iojMEmzk1Ty8FENmVXxkUeXdINmwreZ67RanAFtRs35GpRg_TzUm1F3juhPFzG_ArfPztTFw1D31cFzEdVd6kTmuVXnvscGJjDU6flvvgvBVe6IjQ1CMB-ZFsy6yK8OMw9MmU3hQDXgXYcyU31kZRVwWeJ-imzBmG5k"
+          draggable={false}
+          src="/assets/notipala-mascot.png"
         />
       </div>
 
