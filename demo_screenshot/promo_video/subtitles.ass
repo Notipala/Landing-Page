@@ -1,0 +1,30 @@
+[Script Info]
+Title: Notipala Product Tour — Traditional Chinese
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+ScaledBorderAndShadow: yes
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,PingFang TC,40,&H00FFFFFF,&H000000FF,&H000B2232,&HC90B2232,-1,0,0,0,100,100,0,0,3,1,0,2,230,230,25,1
+Style: Brand,PingFang TC,44,&H00FFFFFF,&H000000FF,&H00073B8E,&HD0073B8E,-1,0,0,0,100,100,0,0,3,1,0,2,300,300,25,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.50,0:00:04.30,Default,,0,0,0,,每一個問題，都能成為知識的起點
+Dialogue: 0,0:00:04.30,0:00:08.80,Default,,0,0,0,,當你持續探索，Section Map 也會跟著成長
+Dialogue: 0,0:00:09.00,0:00:12.60,Default,,0,0,0,,輸入問題，Notipala 不只整理回答
+Dialogue: 0,0:00:12.60,0:00:16.50,Default,,0,0,0,,也把每個論點連回它的來源
+Dialogue: 0,0:00:16.50,0:00:20.00,Default,,0,0,0,,展開 Evidence，就能立即確認答案的依據
+Dialogue: 0,0:00:20.00,0:00:23.40,Default,,0,0,0,,有自己的資料？直接上傳檔案
+Dialogue: 0,0:00:23.40,0:00:28.00,Default,,0,0,0,,系統會讀取內容，建立可以追蹤的章節地圖
+Dialogue: 0,0:00:28.00,0:00:31.60,Default,,0,0,0,,接著追問，也不必重新開始
+Dialogue: 0,0:00:31.60,0:00:36.00,Default,,0,0,0,,新的答案會沿著原有脈絡，讓地圖繼續長大
+Dialogue: 0,0:00:36.00,0:00:40.50,Default,,0,0,0,,切換到 Memory Mode，選擇想聚焦的 Section
+Dialogue: 0,0:00:40.50,0:00:43.20,Default,,0,0,0,,帶著選定的脈絡，繼續提問
+Dialogue: 0,0:00:43.20,0:00:47.50,Default,,0,0,0,,Notipala 會標出實際使用的節點和推理路徑
+Dialogue: 0,0:00:47.50,0:00:52.00,Default,,0,0,0,,讓答案如何形成，一目了然
+Dialogue: 0,0:00:52.00,0:00:54.00,Brand,,0,0,0,,Notipala
+Dialogue: 0,0:00:54.00,0:00:56.00,Brand,,0,0,0,,讓問題，長成知識

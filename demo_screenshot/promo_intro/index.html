@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notipala — Growing Section Map</title>
+    <style>
+      @font-face {
+        font-family: "Geist";
+        src: url("../../frontend/node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2")
+          format("woff2");
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: block;
+      }
+
+      :root {
+        color-scheme: dark;
+        font-family:
+          "Geist",
+          "SF Pro Display",
+          "SF Pro Text",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: #050a10;
+        color: #f6fbff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #050a10;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+      }
+
+      .stage {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        isolation: isolate;
+        background:
+          radial-gradient(circle at 80% 25%, rgba(62, 138, 194, 0.16), transparent 31%),
+          radial-gradient(circle at 25% 70%, rgba(77, 114, 255, 0.12), transparent 34%),
+          linear-gradient(135deg, #07111a 0%, #09141e 46%, #071017 100%);
+      }
+
+      .ambient {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .ambient::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        opacity: 0.28;
+        background-image:
+          linear-gradient(rgba(125, 185, 222, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(125, 185, 222, 0.06) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 88%);
+      }
+
+      .orb {
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(2px);
+        opacity: 0.28;
+      }
+
+      .orb-a {
+        top: -180px;
+        right: 140px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(104, 196, 255, 0.25), transparent 67%);
+      }
+
+      .orb-b {
+        bottom: -270px;
+        left: 250px;
+        width: 620px;
+        height: 620px;
+        background: radial-gradient(circle, rgba(83, 104, 255, 0.18), transparent 70%);
+      }
+
+      .shell {
+        position: absolute;
+        inset: 0;
+        padding: 44px 58px 54px;
+      }
+
+      .topbar {
+        display: flex;
+        height: 76px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 58px;
+        height: 58px;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid rgba(169, 210, 239, 0.2);
+        border-radius: 18px;
+        background: linear-gradient(145deg, rgba(220, 236, 247, 0.98), rgba(151, 195, 227, 0.88));
+        box-shadow:
+          0 16px 45px rgba(22, 84, 129, 0.24),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      }
+
+      .brand-mark img {
+        width: 62px;
+        height: 62px;
+        object-fit: contain;
+      }
+
+      .brand-name {
+        font-size: 25px;
+        font-weight: 720;
+        letter-spacing: -0.035em;
+      }
+
+      .brand-tagline {
+        margin-top: 3px;
+        color: #8ea5b6;
+        font-size: 12px;
+        font-weight: 620;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .live-label {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: #b5c8d6;
+        font-size: 12px;
+        font-weight: 720;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .live-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #67d4ff;
+        box-shadow:
+          0 0 0 6px rgba(103, 212, 255, 0.09),
+          0 0 26px rgba(103, 212, 255, 0.85);
+      }
+
+      .workspace {
+        display: grid;
+        height: 878px;
+        margin-top: 27px;
+        grid-template-columns: 626px minmax(0, 1fr);
+        gap: 26px;
+        transform-origin: 62% 52%;
+      }
+
+      .panel {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(158, 196, 221, 0.15);
+        border-radius: 28px;
+        background: linear-gradient(155deg, rgba(15, 28, 40, 0.91), rgba(8, 19, 29, 0.84));
+        box-shadow:
+          0 28px 80px rgba(0, 0, 0, 0.28),
+          inset 0 1px 0 rgba(255, 255, 255, 0.035);
+        backdrop-filter: blur(24px);
+      }
+
+      .panel::after {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        border-radius: inherit;
+        box-shadow: inset 0 0 100px rgba(5, 14, 22, 0.2);
+        content: "";
+        pointer-events: none;
+      }
+
+      .chat-panel {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .panel-head {
+        display: flex;
+        min-height: 88px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        border-bottom: 1px solid rgba(151, 194, 220, 0.1);
+      }
+
+      .eyebrow {
+        color: #74c9ed;
+        font-size: 11px;
+        font-weight: 760;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+
+      .panel-title {
+        margin-top: 6px;
+        font-size: 20px;
+        font-weight: 680;
+        letter-spacing: -0.026em;
+      }
+
+      .input-count {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 12px;
+        border: 1px solid rgba(140, 190, 220, 0.14);
+        border-radius: 999px;
+        color: #9eb4c4;
+        background: rgba(255, 255, 255, 0.025);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .input-count strong {
+        color: #ecf8ff;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .thread {
+        position: relative;
+        flex: 1;
+        overflow: hidden;
+        padding: 26px 28px 12px;
+      }
+
+      .thread-line {
+        position: absolute;
+        top: 31px;
+        bottom: 20px;
+        left: 43px;
+        width: 1px;
+        background: linear-gradient(to bottom, rgba(102, 207, 249, 0.55), rgba(102, 207, 249, 0.06));
+      }
+
+      .messages {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .exchange {
+        position: relative;
+        padding-left: 34px;
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+      }
+
+      .exchange::before {
+        position: absolute;
+        top: 17px;
+        left: 9px;
+        width: 13px;
+        height: 13px;
+        border: 3px solid #10202c;
+        border-radius: 50%;
+        background: #69d4ff;
+        box-shadow: 0 0 20px rgba(105, 212, 255, 0.68);
+        content: "";
+      }
+
+      .question {
+        display: inline-flex;
+        max-width: 515px;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 15px;
+        border: 1px solid rgba(126, 180, 215, 0.16);
+        border-radius: 14px 14px 4px 14px;
+        color: #eef8ff;
+        background: linear-gradient(135deg, rgba(41, 73, 96, 0.75), rgba(25, 48, 67, 0.74));
+        font-size: 14px;
+        font-weight: 560;
+        line-height: 1.4;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+      }
+
+      .q-index {
+        color: #75d6ff;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
+
+      .answer-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 18px;
+        margin-top: 8px;
+        padding-left: 4px;
+        color: #86a0b2;
+        font-size: 12px;
+        opacity: 0;
+      }
+
+      .answer-check {
+        display: grid;
+        width: 16px;
+        height: 16px;
+        place-items: center;
+        border-radius: 50%;
+        color: #07131c;
+        background: #73d7ff;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .answer-row strong {
+        color: #b6cbd8;
+        font-weight: 620;
+      }
+
+      .composer-wrap {
+        padding: 18px 24px 24px;
+      }
+
+      .composer {
+        position: relative;
+        display: flex;
+        min-height: 78px;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 13px 12px 20px;
+        border: 1px solid rgba(119, 198, 237, 0.28);
+        border-radius: 20px;
+        background: rgba(6, 16, 25, 0.86);
+        box-shadow:
+          0 18px 50px rgba(0, 0, 0, 0.3),
+          0 0 0 1px rgba(70, 157, 207, 0.03),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      .composer-glow {
+        position: absolute;
+        inset: -1px;
+        z-index: -1;
+        border-radius: inherit;
+        opacity: 0;
+        background: linear-gradient(90deg, rgba(74, 180, 236, 0.34), rgba(91, 113, 255, 0.14));
+        filter: blur(12px);
+      }
+
+      .composer-text {
+        min-width: 0;
+        flex: 1;
+        color: #eef9ff;
+        font-size: 15px;
+        font-weight: 540;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+      }
+
+      .composer-placeholder {
+        color: #60798b;
+      }
+
+      .caret {
+        display: inline-block;
+        width: 2px;
+        height: 19px;
+        margin-left: 2px;
+        border-radius: 1px;
+        vertical-align: -4px;
+        background: #7bdcff;
+        box-shadow: 0 0 12px rgba(123, 220, 255, 0.7);
+      }
+
+      .send {
+        display: grid;
+        width: 50px;
+        height: 50px;
+        flex: 0 0 50px;
+        place-items: center;
+        border: 1px solid rgba(158, 222, 250, 0.32);
+        border-radius: 15px;
+        color: #06131c;
+        background: linear-gradient(145deg, #a9e8ff, #68c8ef);
+        box-shadow: 0 10px 25px rgba(58, 166, 214, 0.22);
+      }
+
+      .send svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .map-panel {
+        overflow: hidden;
+      }
+
+      .map-head {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        height: 88px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        border-bottom: 1px solid rgba(151, 194, 220, 0.1);
+      }
+
+      .map-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .map-status {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #8fa8b9;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .status-spinner {
+        width: 15px;
+        height: 15px;
+        border: 2px solid rgba(105, 211, 255, 0.18);
+        border-top-color: #69d3ff;
+        border-radius: 50%;
+        transform: rotate(0deg);
+      }
+
+      .section-counter {
+        min-width: 112px;
+        padding: 10px 14px;
+        border: 1px solid rgba(125, 200, 235, 0.16);
+        border-radius: 13px;
+        color: #9fb4c3;
+        background: rgba(255, 255, 255, 0.025);
+        font-size: 12px;
+        font-weight: 620;
+        text-align: center;
+      }
+
+      .section-counter strong {
+        margin-right: 3px;
+        color: #eefaff;
+        font-size: 16px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .map-canvas {
+        position: relative;
+        height: 790px;
+        overflow: hidden;
+      }
+
+      .map-canvas::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        background:
+          radial-gradient(circle at 52% 45%, rgba(91, 195, 240, 0.07), transparent 36%),
+          linear-gradient(rgba(115, 184, 222, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(115, 184, 222, 0.035) 1px, transparent 1px);
+        background-size:
+          auto,
+          34px 34px,
+          34px 34px;
+        mask-image: radial-gradient(circle at center, black, transparent 82%);
+      }
+
+      #map {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        transform-origin: 52% 46%;
+      }
+
+      .edge {
+        fill: none;
+        stroke: rgba(109, 186, 225, 0.33);
+        stroke-linecap: round;
+        stroke-width: 1.6;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .edge.core {
+        stroke: rgba(110, 211, 250, 0.58);
+        stroke-width: 2;
+      }
+
+      .edge.reason {
+        stroke: #f59e0b;
+        stroke-width: 3;
+        filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.82));
+      }
+
+      .node {
+        opacity: 0;
+      }
+
+      .node rect {
+        stroke: rgba(129, 192, 228, 0.2);
+        stroke-width: 1.2;
+        fill: rgba(17, 35, 49, 0.94);
+        filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.28));
+      }
+
+      .node text {
+        fill: #c8dae5;
+        font-size: 14px;
+        font-weight: 610;
+        letter-spacing: -0.01em;
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+
+      .node.core rect {
+        stroke: rgba(121, 219, 255, 0.68);
+        fill: url(#coreFill);
+        filter:
+          drop-shadow(0 9px 22px rgba(0, 0, 0, 0.34))
+          drop-shadow(0 0 18px rgba(91, 199, 241, 0.22));
+      }
+
+      .node.core text {
+        fill: #f2fbff;
+        font-size: 16px;
+        font-weight: 720;
+      }
+
+      .node.evidence rect {
+        stroke: rgba(111, 186, 255, 0.34);
+        fill: rgba(24, 42, 69, 0.96);
+      }
+
+      .node.compare rect {
+        stroke: rgba(146, 145, 255, 0.42);
+        fill: rgba(37, 35, 68, 0.96);
+      }
+
+      .node.next rect {
+        stroke: rgba(93, 218, 186, 0.38);
+        fill: rgba(18, 55, 51, 0.96);
+      }
+
+      .pulse {
+        opacity: 0;
+        fill: #ffd27a;
+        filter: drop-shadow(0 0 10px rgba(245, 158, 11, 1));
+      }
+
+      .map-event {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 15px;
+        border: 1px solid rgba(113, 206, 245, 0.18);
+        border-radius: 999px;
+        color: #a8bdca;
+        background: rgba(6, 16, 24, 0.74);
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.22);
+        font-size: 12px;
+        font-weight: 620;
+        opacity: 0;
+        transform: translate(-50%, 10px);
+        backdrop-filter: blur(14px);
+      }
+
+      .map-event-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #6bd8ff;
+        box-shadow: 0 0 14px rgba(107, 216, 255, 0.85);
+      }
+
+      .hero {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+        opacity: 0;
+      }
+
+      .hero::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        background:
+          radial-gradient(circle at center, rgba(7, 19, 29, 0.5), rgba(4, 10, 16, 0.92) 68%),
+          rgba(4, 10, 16, 0.25);
+        backdrop-filter: blur(5px);
+      }
+
+      .hero-content {
+        position: relative;
+        width: 1080px;
+        text-align: center;
+        transform: translateY(22px) scale(0.98);
+      }
+
+      .hero-kicker {
+        color: #78d7ff;
+        font-size: 13px;
+        font-weight: 790;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .hero h1 {
+        max-width: 1050px;
+        margin: 20px auto 0;
+        font-size: 72px;
+        font-weight: 720;
+        line-height: 1.03;
+        letter-spacing: -0.052em;
+      }
+
+      .hero h1 span {
+        color: #91defc;
+        text-shadow: 0 0 34px rgba(90, 197, 240, 0.18);
+      }
+
+      .hero-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 30px;
+        color: #c6d8e4;
+        font-size: 15px;
+        font-weight: 650;
+        letter-spacing: 0.04em;
+      }
+
+      .hero-brand img {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(215, 235, 248, 0.92);
+        object-fit: contain;
+      }
+
+      .final-black {
+        position: absolute;
+        inset: 0;
+        z-index: 40;
+        pointer-events: none;
+        background: #050a10;
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="stage" aria-label="Notipala promotional intro">
+      <div class="ambient">
+        <div class="orb orb-a"></div>
+        <div class="orb orb-b"></div>
+      </div>
+
+      <div class="shell" id="shell">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark">
+              <img src="../../frontend/public/Notipala2-removebg.png" alt="" />
+            </div>
+            <div>
+              <div class="brand-name">Notipala</div>
+              <div class="brand-tagline">Your research memory</div>
+            </div>
+          </div>
+          <div class="live-label">
+            <span class="live-dot"></span>
+            Live knowledge workspace
+          </div>
+        </header>
+
+        <section class="workspace" id="workspace">
+          <article class="panel chat-panel">
+            <div class="panel-head">
+              <div>
+                <div class="eyebrow">Research thread</div>
+                <div class="panel-title">Ask. Learn. Build.</div>
+              </div>
+              <div class="input-count"><strong id="inputCount">0</strong> <span id="inputLabel">inputs</span></div>
+            </div>
+
+            <div class="thread">
+              <div class="thread-line"></div>
+              <div class="messages">
+                <div class="exchange" data-send="1250">
+                  <div class="question">
+                    <span class="q-index">01</span>
+                    How does retrieval improve LLM accuracy?
+                  </div>
+                  <div class="answer-row">
+                    <span class="answer-check">✓</span>
+                    <span><strong>Answer grounded</strong> in 6 sources</span>
+                  </div>
+                </div>
+
+                <div class="exchange" data-send="3000">
+                  <div class="question">
+                    <span class="q-index">02</span>
+                    Show me the supporting evidence.
+                  </div>
+                  <div class="answer-row">
+                    <span class="answer-check">✓</span>
+                    <span><strong>Evidence connected</strong> to 5 sections</span>
+                  </div>
+                </div>
+
+                <div class="exchange" data-send="4750">
+                  <div class="question">
+                    <span class="q-index">03</span>
+                    Compare the strongest sources.
+                  </div>
+                  <div class="answer-row">
+                    <span class="answer-check">✓</span>
+                    <span><strong>Trade-offs mapped</strong> across the report</span>
+                  </div>
+                </div>
+
+                <div class="exchange" data-send="6350">
+                  <div class="question">
+                    <span class="q-index">04</span>
+                    What should I explore next?
+                  </div>
+                  <div class="answer-row">
+                    <span class="answer-check">✓</span>
+                    <span><strong>Reasoning path</strong> highlighted</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="composer-wrap">
+              <div class="composer">
+                <div class="composer-glow" id="composerGlow"></div>
+                <div class="composer-text" id="composerText">
+                  <span class="composer-placeholder">Ask anything…</span><span class="caret"></span>
+                </div>
+                <div class="send" id="sendButton" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel map-panel">
+            <div class="map-head">
+              <div>
+                <div class="eyebrow">Section map</div>
+                <div class="panel-title">Knowledge that grows with you</div>
+              </div>
+              <div class="map-meta">
+                <div class="map-status">
+                  <span class="status-spinner" id="statusSpinner"></span>
+                  <span id="statusText">Waiting for your question</span>
+                </div>
+                <div class="section-counter"><strong id="sectionCount">1</strong> <span id="sectionLabel">section</span></div>
+              </div>
+            </div>
+
+            <div class="map-canvas">
+              <svg id="map" viewBox="0 0 1080 760" role="img" aria-label="A Section Map that grows after every user question">
+                <defs>
+                  <linearGradient id="coreFill" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#1f526d" />
+                    <stop offset="1" stop-color="#173549" />
+                  </linearGradient>
+                  <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
+                    <feGaussianBlur stdDeviation="5" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <g id="edges">
+                  <path class="edge core" data-birth="1260" pathLength="1" d="M540 350 C435 275 360 215 300 183" />
+                  <path class="edge core" data-birth="1360" pathLength="1" d="M540 350 C615 265 700 215 782 184" />
+                  <path class="edge core" data-birth="1470" pathLength="1" d="M540 350 C675 352 755 386 832 416" />
+                  <path class="edge" data-birth="3060" pathLength="1" d="M264 163 C214 118 170 89 126 74" />
+                  <path class="edge" data-birth="3150" pathLength="1" d="M255 191 C198 233 175 272 158 314" />
+                  <path class="edge" data-birth="3250" pathLength="1" d="M780 167 C725 112 675 84 622 72" />
+                  <path class="edge" data-birth="3350" pathLength="1" d="M820 169 C890 156 935 134 978 105" />
+                  <path class="edge" data-birth="3450" pathLength="1" d="M875 426 C949 455 986 487 1004 528" />
+                  <path class="edge" data-birth="3630" pathLength="1" d="M153 334 C112 359 83 389 62 422" />
+                  <path class="edge" data-birth="3800" pathLength="1" d="M267 166 C346 120 420 98 487 93" />
+                  <path class="edge" data-birth="4810" pathLength="1" d="M521 385 C478 471 445 527 407 580" />
+                  <path class="edge" data-birth="4920" pathLength="1" d="M569 384 C603 481 634 537 665 590" />
+                  <path class="edge" data-birth="5040" pathLength="1" d="M851 442 C877 512 880 557 876 608" />
+                  <path class="edge" data-birth="5160" pathLength="1" d="M402 602 C311 617 242 624 183 632" />
+                  <path class="edge compare" data-birth="5320" pathLength="1" d="M450 603 C518 609 577 610 627 608" />
+                  <path class="edge compare" data-birth="5420" pathLength="1" d="M704 610 C755 610 808 614 840 624" />
+                  <path class="edge reason" data-birth="6400" data-reason="1" pathLength="1" d="M168 648 C259 701 359 712 468 696" />
+                  <path class="edge reason" data-birth="6500" data-reason="1" pathLength="1" d="M525 686 C607 690 668 699 734 713" />
+                  <path class="edge reason" data-birth="6600" data-reason="1" pathLength="1" d="M800 713 C874 712 930 700 984 676" />
+                  <path class="edge" data-birth="6740" pathLength="1" d="M672 635 C639 673 604 695 556 704" />
+                </g>
+
+                <g id="nodes">
+                  <g class="node core" data-birth="150" transform="translate(540 350)">
+                    <rect x="-85" y="-31" width="170" height="62" rx="17" />
+                    <text x="0" y="1">RAG accuracy</text>
+                  </g>
+
+                  <g class="node" data-birth="1320" transform="translate(265 170)">
+                    <rect x="-62" y="-25" width="124" height="50" rx="14" />
+                    <text x="0" y="1">Retrieval</text>
+                  </g>
+                  <g class="node" data-birth="1420" transform="translate(805 170)">
+                    <rect x="-65" y="-25" width="130" height="50" rx="14" />
+                    <text x="0" y="1">Grounding</text>
+                  </g>
+                  <g class="node" data-birth="1530" transform="translate(870 425)">
+                    <rect x="-78" y="-25" width="156" height="50" rx="14" />
+                    <text x="0" y="1">Hallucination</text>
+                  </g>
+
+                  <g class="node" data-birth="3120" transform="translate(118 68)">
+                    <rect x="-65" y="-23" width="130" height="46" rx="13" />
+                    <text x="0" y="1">Query intent</text>
+                  </g>
+                  <g class="node" data-birth="3210" transform="translate(150 325)">
+                    <rect x="-69" y="-23" width="138" height="46" rx="13" />
+                    <text x="0" y="1">Vector search</text>
+                  </g>
+                  <g class="node evidence" data-birth="3310" transform="translate(610 66)">
+                    <rect x="-58" y="-23" width="116" height="46" rx="13" />
+                    <text x="0" y="1">Citations</text>
+                  </g>
+                  <g class="node evidence" data-birth="3410" transform="translate(980 98)">
+                    <rect x="-70" y="-23" width="140" height="46" rx="13" />
+                    <text x="0" y="1">Source trust</text>
+                  </g>
+                  <g class="node evidence" data-birth="3510" transform="translate(1008 545)">
+                    <rect x="-62" y="-23" width="124" height="46" rx="13" />
+                    <text x="0" y="1">Evaluation</text>
+                  </g>
+                  <g class="node evidence" data-birth="3690" transform="translate(58 434)">
+                    <rect x="-58" y="-23" width="116" height="46" rx="13" />
+                    <text x="0" y="1">Documents</text>
+                  </g>
+                  <g class="node evidence" data-birth="3860" transform="translate(500 90)">
+                    <rect x="-58" y="-23" width="116" height="46" rx="13" />
+                    <text x="0" y="1">Chunking</text>
+                  </g>
+
+                  <g class="node compare" data-birth="4870" transform="translate(400 600)">
+                    <rect x="-67" y="-24" width="134" height="48" rx="14" />
+                    <text x="0" y="1">Fine-tuning</text>
+                  </g>
+                  <g class="node compare" data-birth="4980" transform="translate(670 610)">
+                    <rect x="-58" y="-24" width="116" height="48" rx="14" />
+                    <text x="0" y="1">Freshness</text>
+                  </g>
+                  <g class="node compare" data-birth="5100" transform="translate(876 630)">
+                    <rect x="-43" y="-24" width="86" height="48" rx="14" />
+                    <text x="0" y="1">Cost</text>
+                  </g>
+                  <g class="node compare" data-birth="5220" transform="translate(152 640)">
+                    <rect x="-64" y="-24" width="128" height="48" rx="14" />
+                    <text x="0" y="1">Adaptation</text>
+                  </g>
+
+                  <g class="node next" data-birth="6460" transform="translate(500 700)">
+                    <rect x="-62" y="-24" width="124" height="48" rx="14" />
+                    <text x="0" y="1">Production</text>
+                  </g>
+                  <g class="node next" data-birth="6560" transform="translate(765 720)">
+                    <rect x="-69" y="-24" width="138" height="48" rx="14" />
+                    <text x="0" y="1">Monitoring</text>
+                  </g>
+                  <g class="node next" data-birth="6660" transform="translate(1000 675)">
+                    <rect x="-70" y="-24" width="140" height="48" rx="14" />
+                    <text x="0" y="1">Next questions</text>
+                  </g>
+                  <g class="node next" data-birth="6800" transform="translate(600 480)">
+                    <rect x="-70" y="-24" width="140" height="48" rx="14" />
+                    <text x="0" y="1">Feedback loop</text>
+                  </g>
+                  <g class="node next" data-birth="6920" transform="translate(285 455)">
+                    <rect x="-62" y="-24" width="124" height="48" rx="14" />
+                    <text x="0" y="1">Observability</text>
+                  </g>
+                </g>
+
+                <circle class="pulse" id="pulse" r="5" cx="0" cy="0" />
+              </svg>
+
+              <div class="map-event" id="mapEvent">
+                <span class="map-event-dot"></span>
+                <span id="mapEventText">New sections connected</span>
+              </div>
+            </div>
+          </article>
+        </section>
+      </div>
+
+      <section class="hero" id="hero">
+        <div class="hero-content" id="heroContent">
+          <div class="hero-kicker">A living research memory</div>
+          <h1>Every question grows<br /><span>your knowledge.</span></h1>
+          <div class="hero-brand">
+            <img src="../../frontend/public/Notipala2-removebg.png" alt="" />
+            <span>Notipala · Organize knowledge. Connect ideas.</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="final-black" id="finalBlack"></div>
+    </main>
+
+    <script>
+      (() => {
+        const DURATION = 9000;
+        const questions = [
+          { start: 420, end: 1160, send: 1250, text: "How does retrieval improve LLM accuracy?" },
+          { start: 2220, end: 2910, send: 3000, text: "Show me the supporting evidence." },
+          { start: 3970, end: 4660, send: 4750, text: "Compare the strongest sources." },
+          { start: 5620, end: 6260, send: 6350, text: "What should I explore next?" },
+        ];
+
+        const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+        const mix = (a, b, amount) => a + (b - a) * amount;
+        const smooth = (a, b, value) => {
+          const x = clamp((value - a) / (b - a));
+          return x * x * (3 - 2 * x);
+        };
+        const pop = (a, b, value) => {
+          const x = clamp((value - a) / (b - a));
+          const overshoot = 1.70158;
+          const y = x - 1;
+          return 1 + (overshoot + 1) * y * y * y + overshoot * y * y;
+        };
+
+        const composerText = document.getElementById("composerText");
+        const composerGlow = document.getElementById("composerGlow");
+        const sendButton = document.getElementById("sendButton");
+        const inputCount = document.getElementById("inputCount");
+        const inputLabel = document.getElementById("inputLabel");
+        const sectionCount = document.getElementById("sectionCount");
+        const sectionLabel = document.getElementById("sectionLabel");
+        const statusText = document.getElementById("statusText");
+        const statusSpinner = document.getElementById("statusSpinner");
+        const mapEvent = document.getElementById("mapEvent");
+        const mapEventText = document.getElementById("mapEventText");
+        const workspace = document.getElementById("workspace");
+        const map = document.getElementById("map");
+        const hero = document.getElementById("hero");
+        const heroContent = document.getElementById("heroContent");
+        const finalBlack = document.getElementById("finalBlack");
+        const shell = document.getElementById("shell");
+        const exchanges = [...document.querySelectorAll(".exchange")];
+        const nodes = [...document.querySelectorAll(".node")];
+        const edges = [...document.querySelectorAll(".edge")];
+        const pulse = document.getElementById("pulse");
+
+        const eventMoments = [
+          { at: 1350, text: "Question structure added" },
+          { at: 3100, text: "Evidence cluster connected" },
+          { at: 4860, text: "Cross-section comparison added" },
+          { at: 6460, text: "Reasoning path highlighted" },
+        ];
+
+        function setComposer(t) {
+          const active = questions.find((question) => t >= question.start && t < question.send);
+          const justSent = questions.some((question) => t >= question.send - 100 && t < question.send + 170);
+          const caretOpacity = Math.floor(t / 320) % 2 === 0 ? 1 : 0.28;
+
+          if (active) {
+            const progress = clamp((t - active.start) / (active.end - active.start));
+            const length = Math.floor(active.text.length * progress);
+            const typed = active.text.slice(0, length);
+            composerText.innerHTML = `${typed}<span class="caret" style="opacity:${caretOpacity}"></span>`;
+            composerGlow.style.opacity = String(0.28 + Math.sin(progress * Math.PI) * 0.55);
+          } else {
+            composerText.innerHTML = `<span class="composer-placeholder">Ask anything…</span><span class="caret" style="opacity:${caretOpacity}"></span>`;
+            composerGlow.style.opacity = "0";
+          }
+
+          const sentPulse = justSent ? Math.sin(clamp((t % 1000) / 170) * Math.PI) : 0;
+          sendButton.style.transform = `scale(${1 + sentPulse * 0.09})`;
+          sendButton.style.boxShadow = `0 10px 25px rgba(58, 166, 214, ${0.22 + sentPulse * 0.42})`;
+        }
+
+        function setThread(t) {
+          let sentCount = 0;
+          exchanges.forEach((exchange, index) => {
+            const sentAt = Number(exchange.dataset.send);
+            const reveal = smooth(sentAt, sentAt + 240, t);
+            const answerReveal = smooth(sentAt + 210, sentAt + 500, t);
+            const questionScale = mix(0.985, 1, pop(sentAt, sentAt + 360, t));
+            exchange.style.opacity = String(reveal);
+            exchange.style.transform = `translateY(${mix(14, 0, reveal)}px) scale(${questionScale})`;
+            exchange.querySelector(".answer-row").style.opacity = String(answerReveal);
+            if (t >= sentAt) sentCount = index + 1;
+          });
+          inputCount.textContent = String(sentCount);
+          inputLabel.textContent = sentCount === 1 ? "input" : "inputs";
+        }
+
+        function setMap(t) {
+          let visibleNodes = 0;
+          nodes.forEach((node) => {
+            const birth = Number(node.dataset.birth);
+            const reveal = smooth(birth, birth + 310, t);
+            const scale = mix(0.76, 1, pop(birth, birth + 430, t));
+            const baseTransform = node.dataset.baseTransform || node.getAttribute("transform");
+            node.dataset.baseTransform = baseTransform;
+            node.style.opacity = String(reveal);
+            node.setAttribute("transform", `${baseTransform} scale(${scale})`);
+            if (t >= birth) visibleNodes += 1;
+          });
+
+          edges.forEach((edge) => {
+            const birth = Number(edge.dataset.birth);
+            const reveal = smooth(birth, birth + 460, t);
+            edge.style.strokeDasharray = "1";
+            edge.style.strokeDashoffset = String(1 - reveal);
+            edge.style.opacity = String(reveal);
+          });
+
+          sectionCount.textContent = String(Math.max(1, visibleNodes));
+          sectionLabel.textContent = visibleNodes === 1 ? "section" : "sections";
+
+          const activeQuestion = questions.some((question) => t >= question.start && t < question.send + 700);
+          const mapGrowing = eventMoments.some((event) => t >= event.at && t < event.at + 760);
+          statusText.textContent = t < 420
+            ? "Waiting for your question"
+            : t < 7050
+              ? mapGrowing
+                ? "Growing Section Map"
+                : activeQuestion
+                  ? "Connecting new context"
+                  : "Map synchronized"
+              : "20 sections connected";
+          statusSpinner.style.opacity = t < 7050 ? "1" : "0";
+          statusSpinner.style.transform = `rotate(${t * 0.35}deg)`;
+
+          let currentEvent = null;
+          eventMoments.forEach((event) => {
+            if (t >= event.at && t <= event.at + 930) currentEvent = event;
+          });
+          if (currentEvent) {
+            const eventIn = smooth(currentEvent.at, currentEvent.at + 180, t);
+            const eventOut = 1 - smooth(currentEvent.at + 680, currentEvent.at + 930, t);
+            const eventOpacity = Math.min(eventIn, eventOut);
+            mapEventText.textContent = currentEvent.text;
+            mapEvent.style.opacity = String(eventOpacity);
+            mapEvent.style.transform = `translate(-50%, ${mix(10, 0, eventIn)}px)`;
+          } else {
+            mapEvent.style.opacity = "0";
+          }
+
+          const zoomOut = smooth(6500, 7450, t);
+          map.style.transform = `scale(${mix(1.035, 0.955, zoomOut)}) translateY(${mix(0, -5, zoomOut)}px)`;
+
+          if (t >= 6400 && t < 7400) {
+            const p = clamp((t - 6400) / 900);
+            const points = [
+              [162, 648],
+              [500, 700],
+              [765, 720],
+              [1000, 675],
+            ];
+            const segments = points.length - 1;
+            const scaled = p * segments;
+            const index = Math.min(segments - 1, Math.floor(scaled));
+            const local = scaled - index;
+            const x = mix(points[index][0], points[index + 1][0], local);
+            const y = mix(points[index][1], points[index + 1][1], local);
+            pulse.setAttribute("cx", x);
+            pulse.setAttribute("cy", y);
+            pulse.style.opacity = String(Math.sin(p * Math.PI) * 0.95);
+          } else {
+            pulse.style.opacity = "0";
+          }
+        }
+
+        function setHero(t) {
+          const heroIn = smooth(7240, 7740, t);
+          const heroOut = 1 - smooth(8700, 8990, t);
+          const heroOpacity = Math.min(heroIn, heroOut);
+          hero.style.opacity = String(heroOpacity);
+          heroContent.style.transform = `translateY(${mix(22, 0, heroIn)}px) scale(${mix(0.98, 1, heroIn)})`;
+          workspace.style.transform = `scale(${mix(1, 0.965, heroIn)})`;
+          shell.style.opacity = String(1 - heroIn * 0.58);
+
+          const opening = 1 - smooth(0, 360, t);
+          const closing = smooth(8800, DURATION, t);
+          finalBlack.style.opacity = String(Math.max(opening, closing));
+        }
+
+        function render(time) {
+          const t = clamp(time, 0, DURATION);
+          setComposer(t);
+          setThread(t);
+          setMap(t);
+          setHero(t);
+          document.documentElement.dataset.time = String(Math.round(t));
+        }
+
+        window.__PROMO_DURATION = DURATION;
+        window.__setPromoTime = render;
+        render(0);
+      })();
+    </script>
+  </body>
+</html>

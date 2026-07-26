@@ -1,0 +1,1805 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notipala Playwright GIF Recorder</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        --ink: #102431;
+        --muted: #668091;
+        --line: #bdd0dc;
+        --paper: #f7fbfd;
+        --blue-50: #e8f1f8;
+        --blue-100: #dceaf3;
+        --blue-300: #8fb6cf;
+        --blue-700: #174d8d;
+        --green-50: #d8efe8;
+        --green-700: #1f5b4c;
+        --amber-300: #fcd46b;
+        --amber-600: #d68a00;
+        --report-width: 390px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 960px;
+        height: 640px;
+        margin: 0;
+        overflow: hidden;
+        background: #dceaf3;
+        color: var(--ink);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 188px minmax(0, 1fr);
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(circle at 67% 0%, rgba(255, 255, 255, 0.86), transparent 34%),
+          #dceaf3;
+      }
+
+      .sidebar {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        border-right: 1px solid #b7ccd9;
+        background: rgba(236, 246, 251, 0.96);
+        box-shadow: 8px 0 28px rgba(47, 82, 105, 0.05);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 17px 16px 13px;
+      }
+
+      .brand img {
+        width: 45px;
+        height: 45px;
+        object-fit: contain;
+      }
+
+      .brand-name {
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: #0f4d8a;
+      }
+
+      .brand-tagline {
+        margin-top: 2px;
+        font-size: 8px;
+        line-height: 1.35;
+        color: #587181;
+      }
+
+      .new-chat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 4px 13px 13px;
+        padding: 8px 9px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .sidebar-label {
+        padding: 0 14px;
+        font-size: 7px;
+        font-weight: 800;
+        letter-spacing: 0.23em;
+        color: #78909f;
+      }
+
+      .search {
+        margin: 8px 12px 13px;
+        padding: 8px 10px;
+        border: 1px solid #c5d7e1;
+        border-radius: 13px;
+        background: rgba(255, 255, 255, 0.7);
+        color: #78909f;
+        font-size: 9px;
+      }
+
+      .sessions {
+        display: flex;
+        min-height: 0;
+        flex: 1;
+        flex-direction: column;
+        gap: 7px;
+        overflow: hidden;
+        padding: 8px;
+      }
+
+      .session {
+        border: 1px solid #c7d9e3;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.65);
+        padding: 10px 10px 9px;
+      }
+
+      .session.active {
+        border-color: #80acc6;
+        background: #b8d3e4;
+      }
+
+      .session-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        overflow: hidden;
+        font-size: 9px;
+        font-weight: 750;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .session-dot {
+        width: 6px;
+        height: 6px;
+        flex: none;
+        border-radius: 50%;
+        background: #52c6a4;
+      }
+
+      .session-preview {
+        display: -webkit-box;
+        overflow: hidden;
+        margin: 6px 0 0 12px;
+        color: #476475;
+        font-size: 7.5px;
+        line-height: 1.4;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .account {
+        margin: 0 10px 11px;
+        padding: 10px;
+        border-top: 1px solid #c5d7e1;
+        font-size: 8px;
+        color: #5e7888;
+      }
+
+      .account strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--ink);
+        font-size: 10px;
+      }
+
+      .quota {
+        height: 5px;
+        margin-top: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #c7d9e3;
+      }
+
+      .quota::after {
+        display: block;
+        width: 68%;
+        height: 100%;
+        border-radius: inherit;
+        background: #2cb293;
+        content: "";
+      }
+
+      .workspace {
+        display: flex;
+        min-width: 0;
+        height: 100%;
+      }
+
+      .chat {
+        position: relative;
+        display: flex;
+        min-width: 205px;
+        flex: 1;
+        flex-direction: column;
+        overflow: hidden;
+        border-right: 1px solid #b8ccd8;
+      }
+
+      .chat-head {
+        min-height: 115px;
+        padding: 17px 20px 13px;
+        border-bottom: 1px solid rgba(159, 184, 199, 0.55);
+        background: rgba(227, 241, 249, 0.72);
+      }
+
+      .eyebrow {
+        font-size: 7px;
+        font-weight: 850;
+        letter-spacing: 0.22em;
+        color: #58788b;
+      }
+
+      .chat-title {
+        max-width: 310px;
+        margin: 6px 0 9px;
+        font-size: 19px;
+        font-weight: 780;
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+      }
+
+      .theme-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.88);
+        font-size: 8px;
+        font-weight: 700;
+      }
+
+      .messages {
+        min-height: 0;
+        flex: 1;
+        overflow: hidden;
+        padding: 14px 20px 88px;
+      }
+
+      .bubble {
+        margin-bottom: 12px;
+        border: 1px solid rgba(183, 204, 216, 0.95);
+        border-radius: 13px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 12px 14px;
+        box-shadow: 0 7px 18px rgba(56, 87, 105, 0.08);
+        font-size: 9.5px;
+        line-height: 1.6;
+      }
+
+      .bubble.user {
+        border-color: #0b1720;
+        background: #080d12;
+        color: #fff;
+        font-weight: 650;
+      }
+
+      .bubble.answer strong {
+        color: #0d2634;
+      }
+
+      .answer-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .answer-name {
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .status-badge {
+        border-radius: 999px;
+        background: #d8efe8;
+        padding: 3px 6px;
+        color: #1f6b56;
+        font-size: 7px;
+        font-weight: 800;
+      }
+
+      .loading-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #5d7888;
+      }
+
+      .spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid #a8c3d3;
+        border-top-color: #184f8b;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .evidence-toggle {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding: 8px 9px;
+        border: 1px solid #c6d8e2;
+        border-radius: 8px;
+        background: #f5fafc;
+        font-size: 8px;
+        font-weight: 760;
+      }
+
+      .evidence {
+        display: none;
+        gap: 7px;
+        margin-top: 8px;
+      }
+
+      .evidence.open {
+        display: grid;
+      }
+
+      .source-card {
+        border-left: 3px solid #40a98a;
+        border-radius: 6px;
+        background: #edf7f3;
+        padding: 8px 9px;
+        color: #385967;
+        font-size: 7.5px;
+        line-height: 1.45;
+      }
+
+      .composer {
+        position: absolute;
+        right: 16px;
+        bottom: 15px;
+        left: 16px;
+        display: grid;
+        grid-template-columns: 35px minmax(0, 1fr) 38px;
+        align-items: center;
+        gap: 6px;
+        min-height: 58px;
+        padding: 8px;
+        border: 1px solid #b9cedb;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 12px 32px rgba(43, 77, 99, 0.15);
+      }
+
+      .icon-btn,
+      .send-btn {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid #bfd1dd;
+        border-radius: 50%;
+        background: white;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .send-btn {
+        border: 0;
+        background: #153f5a;
+        color: white;
+      }
+
+      .composer input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: #234253;
+        font-size: 9px;
+      }
+
+      .resize-handle {
+        position: relative;
+        z-index: 8;
+        width: 10px;
+        flex: none;
+        cursor: col-resize;
+        border: 0;
+        border-right: 1px solid #b8ccd8;
+        border-left: 1px solid #e4eef4;
+        background: rgba(244, 249, 252, 0.92);
+      }
+
+      .resize-handle::before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 6px;
+        height: 36px;
+        border: 1px solid #b8ccd8;
+        border-radius: 999px;
+        background:
+          radial-gradient(circle, #8ba9ba 1px, transparent 1.5px) center 8px / 4px 6px
+            repeat-y,
+          white;
+        box-shadow: 0 3px 8px rgba(56, 87, 105, 0.13);
+        content: "";
+        transform: translate(-50%, -50%);
+      }
+
+      .report {
+        width: var(--report-width);
+        min-width: 320px;
+        flex: none;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 90% 0%, rgba(255, 255, 255, 0.92), transparent 26%),
+          rgba(249, 252, 253, 0.94);
+      }
+
+      .report-scroll {
+        height: 100%;
+        overflow: auto;
+        padding: 14px 12px 28px;
+        scrollbar-width: none;
+      }
+
+      .report-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .report-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin: 0 2px 10px;
+      }
+
+      .report-title {
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .report-subtitle {
+        margin-top: 2px;
+        color: #6a8392;
+        font-size: 7px;
+      }
+
+      .live-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 1px solid #c9d9e2;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.86);
+        padding: 5px 8px;
+        color: #496779;
+        font-size: 7px;
+        font-weight: 760;
+      }
+
+      .live-pill::before {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #2bb493;
+        content: "";
+      }
+
+      .card {
+        margin-bottom: 10px;
+        overflow: hidden;
+        border: 1px solid #bdd0dc;
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 14px rgba(40, 73, 94, 0.05);
+      }
+
+      .query-card {
+        padding: 11px 12px;
+      }
+
+      .card-kicker {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 9px;
+        font-weight: 800;
+      }
+
+      .focus-label {
+        margin-top: 10px;
+        font-size: 6.5px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        color: #7f95a3;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        min-height: 23px;
+        margin-top: 6px;
+      }
+
+      .chip {
+        border: 1px solid #cad9e2;
+        border-radius: 999px;
+        background: white;
+        padding: 4px 7px;
+        color: #365363;
+        font-size: 6.5px;
+        font-weight: 720;
+        cursor: pointer;
+      }
+
+      .chip.selected {
+        border-color: #3859d9;
+        background: #425de0;
+        color: white;
+      }
+
+      .map-query-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 6px;
+        margin-top: 7px;
+      }
+
+      .map-query-row input {
+        min-width: 0;
+        height: 29px;
+        border: 1px solid #c8d9e2;
+        border-radius: 7px;
+        outline: 0;
+        padding: 0 9px;
+        color: #365363;
+        font-size: 7.5px;
+      }
+
+      .map-query-row button {
+        border: 0;
+        border-radius: 7px;
+        background: #112431;
+        padding: 0 11px;
+        color: white;
+        font-size: 7.5px;
+        font-weight: 750;
+        cursor: pointer;
+      }
+
+      .memory-result {
+        display: none;
+        margin-top: 10px;
+        border-left: 2px solid #61a7d1;
+        padding: 2px 0 2px 10px;
+        font-size: 7.4px;
+        line-height: 1.55;
+      }
+
+      .memory-result.open {
+        display: block;
+      }
+
+      .reason-path {
+        display: none;
+        margin-top: 10px;
+      }
+
+      .reason-path.open {
+        display: block;
+      }
+
+      .reason-title {
+        margin-bottom: 6px;
+        color: #617c8c;
+        font-size: 6.5px;
+        font-weight: 850;
+        letter-spacing: 0.16em;
+      }
+
+      .path-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        overflow: hidden;
+      }
+
+      .path-node {
+        min-width: 84px;
+        border: 1px solid #efbc46;
+        border-radius: 7px;
+        background: white;
+        padding: 7px 6px;
+        text-align: center;
+        font-size: 6.5px;
+        font-weight: 760;
+      }
+
+      .path-arrow {
+        color: #2b9a79;
+        font-size: 8px;
+        font-weight: 850;
+      }
+
+      .updating {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 10px;
+        border: 1px solid #9cc9df;
+        border-radius: 9px;
+        background: #e9f6fb;
+        padding: 9px 10px;
+        color: #215d7b;
+        font-size: 7.5px;
+        font-weight: 720;
+      }
+
+      .updating.open {
+        display: flex;
+      }
+
+      .map-card {
+        background: #e8f1f8;
+      }
+
+      .map-card-head {
+        padding: 11px 12px 7px;
+      }
+
+      .map-title {
+        font-size: 10px;
+        font-weight: 820;
+      }
+
+      .map-description {
+        margin-top: 3px;
+        color: #617b8b;
+        font-size: 7px;
+      }
+
+      .map-viewport {
+        position: relative;
+        min-height: 354px;
+        overflow: hidden;
+        margin: 0 8px 8px;
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.65), transparent 40%),
+          rgba(216, 233, 243, 0.72);
+      }
+
+      .map-stage {
+        position: relative;
+        width: 500px;
+        height: 348px;
+      }
+
+      .map-stage svg {
+        position: absolute;
+        inset: 0;
+        overflow: visible;
+        color: #6f8f9f;
+      }
+
+      .edge-line {
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-width: 1.6;
+      }
+
+      .edge-line.ambiguous {
+        stroke-dasharray: 4 4;
+      }
+
+      .edge-line.highlighted {
+        color: #e5a119;
+        filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.35));
+        stroke-width: 2.7;
+      }
+
+      .map-node {
+        position: absolute;
+        z-index: 4;
+        display: grid;
+        width: 104px;
+        min-height: 36px;
+        place-items: center;
+        border: 0;
+        border-radius: 7px;
+        background: #8fb6cf;
+        padding: 5px 7px;
+        color: #102431;
+        box-shadow: 0 3px 8px rgba(53, 87, 108, 0.14);
+        text-align: center;
+        font-size: 7.3px;
+        font-weight: 780;
+        line-height: 1.15;
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(8px) scale(0.96);
+        transition:
+          opacity 220ms ease,
+          transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 180ms ease;
+      }
+
+      .map-node.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      .map-node:hover {
+        z-index: 20;
+        background: #79a8c4;
+        box-shadow: 0 5px 14px rgba(53, 87, 108, 0.24);
+      }
+
+      .map-node.highlighted {
+        background: var(--amber-300);
+        color: #422b00;
+        box-shadow:
+          0 0 0 3px rgba(251, 191, 36, 0.22),
+          0 0 16px rgba(245, 158, 11, 0.36);
+      }
+
+      .map-node.focused {
+        background: #425de0;
+        color: white;
+        box-shadow:
+          0 0 0 4px rgba(66, 93, 224, 0.2),
+          0 0 18px rgba(56, 89, 217, 0.34);
+      }
+
+      .map-node.focused:hover {
+        background: #3853d4;
+      }
+
+      .map-node.focused.highlighted {
+        background: #425de0;
+        color: white;
+        box-shadow:
+          0 0 0 4px rgba(251, 191, 36, 0.72),
+          0 0 22px rgba(245, 158, 11, 0.48);
+      }
+
+      .edge-pill {
+        position: absolute;
+        z-index: 5;
+        display: grid;
+        width: 65px;
+        min-height: 17px;
+        place-items: center;
+        border: 1px solid #5aa68f;
+        border-radius: 999px;
+        background: #d8efe8;
+        padding: 2px 5px;
+        color: #1f5b4c;
+        text-align: center;
+        font-size: 5.7px;
+        font-weight: 760;
+        line-height: 1.05;
+        cursor: pointer;
+        opacity: 0;
+        transform: scale(0.88);
+        transition:
+          opacity 180ms ease,
+          transform 220ms ease;
+      }
+
+      .edge-pill.visible {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .edge-pill:hover {
+        z-index: 22;
+        background: #c5e8dc;
+      }
+
+      .edge-pill.highlighted {
+        border-color: #df9e17;
+        background: #fff1ba;
+        color: #593a00;
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
+      }
+
+      .map-empty {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        display: grid;
+        place-items: center;
+        color: #6d8797;
+        text-align: center;
+        font-size: 8px;
+      }
+
+      .map-empty.hidden {
+        display: none;
+      }
+
+      .skeleton {
+        width: 210px;
+      }
+
+      .skeleton-line {
+        height: 9px;
+        margin: 8px auto;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #c9dce7, #f5fafc, #c9dce7);
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite linear;
+      }
+
+      @keyframes shimmer {
+        to {
+          background-position: -200% 0;
+        }
+      }
+
+      .back-btn {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        margin: 2px 0 10px;
+        border: 1px solid #bed1dc;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 7px 10px;
+        font-size: 8px;
+        font-weight: 750;
+        cursor: pointer;
+      }
+
+      .back-btn.open {
+        display: inline-flex;
+      }
+
+      .details {
+        display: none;
+        padding: 13px;
+      }
+
+      .details.open {
+        display: block;
+      }
+
+      .detail-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .detail-title {
+        max-width: 360px;
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.15;
+      }
+
+      .detail-kind {
+        margin-top: 4px;
+        color: #6b8290;
+        font-size: 8px;
+      }
+
+      .confidence {
+        border-radius: 999px;
+        background: #d8efe8;
+        padding: 4px 7px;
+        color: #1f6b56;
+        font-size: 6.5px;
+        font-weight: 850;
+      }
+
+      .detail-summary {
+        margin: 13px 0;
+        color: #355261;
+        font-size: 9px;
+        line-height: 1.6;
+      }
+
+      .detail-section-title {
+        margin: 12px 0 6px;
+        color: #7a8e9b;
+        font-size: 6.5px;
+        font-weight: 850;
+        letter-spacing: 0.18em;
+      }
+
+      .detail-list {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .detail-list li {
+        border-radius: 7px;
+        background: #f1f7fa;
+        padding: 8px 9px;
+        color: #355261;
+        font-size: 7.5px;
+        line-height: 1.45;
+      }
+
+      .relation-table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 7px;
+        background: #f4f8fa;
+        font-size: 7px;
+      }
+
+      .relation-table th,
+      .relation-table td {
+        border-bottom: 1px solid #d5e2e9;
+        padding: 7px 8px;
+        text-align: left;
+      }
+
+      .relation-table th {
+        color: #6a8190;
+        font-weight: 800;
+      }
+
+      .toast {
+        position: fixed;
+        z-index: 100;
+        top: 10px;
+        left: 50%;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        max-width: 540px;
+        border-radius: 999px;
+        background: rgba(8, 18, 25, 0.92);
+        padding: 8px 13px;
+        color: white;
+        box-shadow: 0 8px 24px rgba(5, 16, 23, 0.23);
+        font-size: 8px;
+        font-weight: 760;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -8px);
+        transition:
+          opacity 200ms ease,
+          transform 260ms ease;
+      }
+
+      .toast.open {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .toast-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #53d4ad;
+        box-shadow: 0 0 9px rgba(83, 212, 173, 0.7);
+      }
+
+      .demo-cursor {
+        position: fixed;
+        z-index: 200;
+        top: 590px;
+        left: 915px;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #e33352;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow:
+          0 0 0 2px rgba(255, 255, 255, 0.74),
+          0 3px 8px rgba(79, 26, 36, 0.28);
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+      }
+
+      .demo-cursor.clicking::after {
+        position: absolute;
+        inset: -9px;
+        border: 2px solid rgba(227, 51, 82, 0.65);
+        border-radius: 50%;
+        animation: ripple 420ms ease-out;
+        content: "";
+      }
+
+      @keyframes ripple {
+        from {
+          opacity: 1;
+          transform: scale(0.4);
+        }
+        to {
+          opacity: 0;
+          transform: scale(1.3);
+        }
+      }
+
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <img src="../../frontend/public/Notipala2-removebg.png" alt="" />
+          <div>
+            <div class="brand-name">Notipala</div>
+            <div class="brand-tagline">Organize knowledge.<br />Connect ideas.</div>
+          </div>
+        </div>
+        <button class="new-chat" type="button"><span>✎</span> New chat</button>
+        <div class="sidebar-label">SEARCH SESSION HISTORY</div>
+        <div class="search">Search session history...</div>
+        <div class="sidebar-label">SESSION HISTORY</div>
+        <div class="sessions" id="sessions"></div>
+        <div class="account">
+          <strong>Guest trial</strong>
+          68,420 tokens remaining
+          <div class="quota"></div>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <section class="chat">
+          <header class="chat-head">
+            <div class="eyebrow">KNOWLEDGE WORKSPACE</div>
+            <h1 class="chat-title" id="chat-title"></h1>
+            <span class="theme-pill">◔ &nbsp;Dark</span>
+          </header>
+          <div class="messages" id="messages"></div>
+          <div class="composer" data-testid="chat-composer">
+            <label class="icon-btn" id="upload-btn" for="file-input" title="Upload files">↥</label>
+            <input
+              id="composer-input"
+              aria-label="Ask a question"
+              autocomplete="off"
+              placeholder="Ask a question, upload a document..."
+            />
+            <button class="send-btn" id="send-btn" type="button" aria-label="Send question">➤</button>
+            <input id="file-input" type="file" class="hidden" />
+          </div>
+        </section>
+
+        <button
+          class="resize-handle"
+          id="resize-handle"
+          type="button"
+          aria-label="Resize report panel"
+        ></button>
+
+        <aside class="report" id="report-panel">
+          <div class="report-scroll" id="report-scroll">
+            <div class="report-head">
+              <div>
+                <div class="report-title">Graph Report</div>
+                <div class="report-subtitle">Built from the current session graph</div>
+              </div>
+              <span class="live-pill" id="live-pill">12 sections</span>
+            </div>
+
+            <div id="map-view">
+              <section class="card query-card" id="query-card">
+                <div class="card-kicker">⌘ &nbsp;Ask the Knowledge Map</div>
+                <div class="focus-label">FOCUS SECTIONS (OPTIONAL)</div>
+                <div class="chips" id="focus-chips"></div>
+                <div class="map-query-row">
+                  <input
+                    id="map-query"
+                    aria-label="Ask the Knowledge Map"
+                    placeholder="How are these concepts connected?"
+                  />
+                  <button id="ask-map-btn" type="button">⌘ &nbsp;Ask map</button>
+                </div>
+                <div class="memory-result" id="memory-result">
+                  <strong>MEMORY ANSWER</strong><br />
+                  Fresh retrieval keeps answers current while source evaluation and citation
+                  verification preserve trust. The highlighted sections show exactly which
+                  knowledge shaped this answer.
+                </div>
+                <div class="reason-path" id="reason-path">
+                  <div class="reason-title">PRIMARY REASONING PATH</div>
+                  <div class="path-row">
+                    <div class="path-node">Research Question</div>
+                    <span class="path-arrow">→</span>
+                    <div class="path-node">Vector Retrieval</div>
+                    <span class="path-arrow">→</span>
+                    <div class="path-node">Grounded Answer</div>
+                    <span class="path-arrow">→</span>
+                    <div class="path-node">Citation Verification</div>
+                  </div>
+                </div>
+              </section>
+
+              <div class="updating" id="updating">
+                <span class="spinner"></span>
+                <span id="updating-copy">Graph report updating — keeping the previous map visible.</span>
+              </div>
+
+              <section class="card map-card" id="map-card" data-testid="section-map">
+                <div class="map-card-head">
+                  <div class="map-title">Section Map</div>
+                  <div class="map-description">Click a section or bridge to open its report.</div>
+                </div>
+                <div class="map-viewport">
+                  <div class="map-stage" id="map-stage"></div>
+                  <div class="map-empty" id="map-empty">
+                    <div class="skeleton">
+                      <div class="spinner" style="margin: 0 auto 10px"></div>
+                      <strong id="empty-title">Section notes will appear here</strong>
+                      <div class="skeleton-line" style="width: 72%"></div>
+                      <div class="skeleton-line" style="width: 100%"></div>
+                      <div class="skeleton-line" style="width: 58%"></div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <button class="back-btn" id="back-btn" type="button">← &nbsp;Back to map</button>
+            <section class="card details" id="details" data-testid="graph-report-details"></section>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast" id="toast"><span class="toast-dot"></span><span id="toast-copy"></span></div>
+    <div class="demo-cursor" id="demo-cursor"></div>
+
+    <script>
+      const scenario = new URLSearchParams(location.search).get("scenario") || "question";
+      const reportPanel = document.getElementById("report-panel");
+      const reportScroll = document.getElementById("report-scroll");
+      const resizeHandle = document.getElementById("resize-handle");
+      const messages = document.getElementById("messages");
+      const composerInput = document.getElementById("composer-input");
+      const sendButton = document.getElementById("send-btn");
+      const fileInput = document.getElementById("file-input");
+      const evidenceState = { open: false };
+      let currentGraph = "knowledge";
+      let visibleCount = 0;
+      let focusedIds = new Set();
+      let highlightedIds = new Set();
+      let resizing = false;
+      let mapYScale = 1;
+
+      const knowledgeNodes = [
+        {
+          id: "question",
+          title: "Research Question",
+          x: 198,
+          y: 7,
+          summary:
+            "The research question anchors retrieval, comparison, evidence checks, and the final production decision.",
+          points: ["Defines the freshness requirement", "Frames the answer and evidence scope"],
+        },
+        {
+          id: "rag",
+          title: "Retrieval-Augmented Generation",
+          x: 48,
+          y: 69,
+          summary:
+            "RAG retrieves current external evidence at answer time and keeps generated claims traceable to sources.",
+          points: ["Retrieves knowledge without retraining", "Preserves source provenance"],
+        },
+        {
+          id: "fine",
+          title: "Fine-Tuning",
+          x: 198,
+          y: 69,
+          summary:
+            "Fine-tuning updates model parameters for durable specialization, but knowledge freshness depends on retraining cadence.",
+          points: ["Strong domain adaptation", "Higher update cost for changing facts"],
+        },
+        {
+          id: "trust",
+          title: "Source Trust",
+          x: 348,
+          y: 69,
+          summary:
+            "Source trust scores recency, authority, and agreement before evidence reaches the answer.",
+          points: ["Ranks authoritative sources", "Surfaces conflicts and uncertainty"],
+        },
+        {
+          id: "query",
+          title: "Query Understanding",
+          x: 0,
+          y: 140,
+          summary:
+            "Query understanding turns intent into retrievable concepts and constraints.",
+          points: ["Identifies user intent", "Expands concepts without losing scope"],
+        },
+        {
+          id: "retrieve",
+          title: "Vector Retrieval",
+          x: 126,
+          y: 140,
+          summary:
+            "Vector retrieval finds relevant passages across indexed sources and ranks them for answer construction.",
+          points: ["Semantic nearest-neighbor search", "Recency-aware ranking"],
+        },
+        {
+          id: "assemble",
+          title: "Context Assembly",
+          x: 252,
+          y: 140,
+          summary:
+            "Context assembly selects complementary evidence, removes duplication, and preserves citations.",
+          points: ["Balances coverage and token budget", "Keeps evidence attached to claims"],
+        },
+        {
+          id: "params",
+          title: "Model Parameters",
+          x: 396,
+          y: 140,
+          summary:
+            "Model parameters encode learned behavior, but they do not automatically receive newly published facts.",
+          points: ["Stable learned capability", "Requires updates to absorb new facts"],
+        },
+        {
+          id: "ground",
+          title: "Grounded Answer",
+          x: 63,
+          y: 217,
+          summary:
+            "A grounded answer connects every major claim to selected context and avoids unsupported extrapolation.",
+          points: ["Claims remain evidence-backed", "Uncertainty stays visible"],
+        },
+        {
+          id: "verify",
+          title: "Citation Verification",
+          x: 198,
+          y: 217,
+          summary:
+            "Citation verification checks whether cited passages actually support the nearby claims.",
+          points: ["Validates claim-to-source alignment", "Flags missing or weak support"],
+        },
+        {
+          id: "fresh",
+          title: "Freshness Monitoring",
+          x: 333,
+          y: 217,
+          summary:
+            "Freshness monitoring detects when evidence, indexes, or model knowledge are becoming stale.",
+          points: ["Tracks source recency", "Triggers targeted refresh"],
+        },
+        {
+          id: "decision",
+          title: "Production Decision",
+          x: 198,
+          y: 294,
+          summary:
+            "The production decision weighs freshness, latency, source trust, update cost, and answer consistency.",
+          points: ["Chooses RAG, fine-tuning, or a hybrid", "Makes trade-offs explicit"],
+        },
+      ];
+
+      const uploadNodes = [
+        { id: "question", title: "Uploaded Research Pack", x: 198, y: 7 },
+        { id: "rag", title: "File Validation", x: 48, y: 69 },
+        { id: "fine", title: "PDF & Markdown Parsing", x: 198, y: 69 },
+        { id: "trust", title: "Metadata Extraction", x: 348, y: 69 },
+        { id: "query", title: "Document Chunking", x: 0, y: 140 },
+        { id: "retrieve", title: "Section Detection", x: 126, y: 140 },
+        { id: "assemble", title: "Source Index", x: 252, y: 140 },
+        { id: "params", title: "Evidence Linking", x: 396, y: 140 },
+        { id: "ground", title: "Claim Extraction", x: 63, y: 217 },
+        { id: "verify", title: "Cross-Section Synthesis", x: 198, y: 217 },
+        { id: "fresh", title: "Citation Map", x: 333, y: 217 },
+        { id: "decision", title: "Query-Ready Memory", x: 198, y: 294 },
+      ].map((node) => ({
+        ...node,
+        summary:
+          `${node.title} is a source-backed stage in the uploaded-document knowledge pipeline.`,
+        points: ["Preserves source context", "Contributes to the structured Section Map"],
+      }));
+
+      const graphEdges = [
+        { id: "question-rag", source: "question", target: "rag", label: "explores" },
+        { id: "question-fine", source: "question", target: "fine", label: "compares" },
+        { id: "question-trust", source: "question", target: "trust", label: "verifies" },
+        { id: "rag-query", source: "rag", target: "query", label: "frames" },
+        { id: "rag-retrieve", source: "rag", target: "retrieve", label: "retrieves" },
+        {
+          id: "rag-assemble",
+          source: "rag",
+          target: "assemble",
+          label: "assembles",
+          summary:
+            "Retrieval-Augmented Generation assembles selected passages into a compact context while keeping each excerpt connected to its source.",
+        },
+        { id: "fine-params", source: "fine", target: "params", label: "updates" },
+        {
+          id: "trust-verify",
+          source: "trust",
+          target: "verify",
+          label: "audits",
+          pill: false,
+        },
+        { id: "query-ground", source: "query", target: "ground", label: "guides" },
+        {
+          id: "retrieve-ground",
+          source: "retrieve",
+          target: "ground",
+          label: "grounds",
+          summary:
+            "Retrieved evidence grounds the generated answer. The bridge note records which passages support each conclusion and where evidence is incomplete.",
+        },
+        { id: "assemble-verify", source: "assemble", target: "verify", label: "contexts" },
+        { id: "params-fresh", source: "params", target: "fresh", label: "can lag", ambiguous: true },
+        {
+          id: "ground-decision",
+          source: "ground",
+          target: "decision",
+          label: "answers",
+          pillShiftX: -25,
+          pillShiftY: -7,
+        },
+        {
+          id: "verify-decision",
+          source: "verify",
+          target: "decision",
+          label: "supports",
+          pillShiftY: 5,
+        },
+        {
+          id: "fresh-decision",
+          source: "fresh",
+          target: "decision",
+          label: "informs",
+          pillShiftX: 25,
+          pillShiftY: -7,
+        },
+      ];
+
+      const graphs = {
+        knowledge: knowledgeNodes,
+        upload: uploadNodes,
+      };
+
+      function nodeById(id) {
+        return graphs[currentGraph].find((node) => node.id === id);
+      }
+
+      function setPanelWidth(width) {
+        const next = Math.max(340, Math.min(540, width));
+        document.documentElement.style.setProperty("--report-width", `${next}px`);
+      }
+
+      resizeHandle.addEventListener("pointerdown", (event) => {
+        resizing = true;
+        resizeHandle.setPointerCapture?.(event.pointerId);
+      });
+
+      document.addEventListener("pointermove", (event) => {
+        if (!resizing) return;
+        setPanelWidth(960 - event.clientX);
+      });
+
+      document.addEventListener("pointerup", () => {
+        resizing = false;
+      });
+
+      function renderGraph() {
+        const stage = document.getElementById("map-stage");
+        const viewport = document.querySelector(".map-viewport");
+        const nodes = graphs[currentGraph];
+        stage.innerHTML = "";
+        const stageHeight = mapYScale < 1 ? 270 : 348;
+        stage.style.height = `${stageHeight}px`;
+        viewport.style.minHeight = mapYScale < 1 ? "280px" : "354px";
+
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox", `0 0 500 ${stageHeight}`);
+        svg.setAttribute("width", "500");
+        svg.setAttribute("height", String(stageHeight));
+        svg.innerHTML =
+          '<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="currentColor"/></marker></defs>';
+        stage.appendChild(svg);
+
+        for (const edge of graphEdges) {
+          const source = nodeById(edge.source);
+          const target = nodeById(edge.target);
+          if (!source || !target) continue;
+          const sourceIndex = nodes.findIndex((node) => node.id === source.id);
+          const targetIndex = nodes.findIndex((node) => node.id === target.id);
+          const visible = sourceIndex < visibleCount && targetIndex < visibleCount;
+          const highlighted =
+            highlightedIds.has(source.id) && highlightedIds.has(target.id);
+          const x1 = source.x + 52;
+          const y1 = source.y * mapYScale + 36;
+          const x2 = target.x + 52;
+          const y2 = target.y * mapYScale;
+          const midY = y1 + (y2 - y1) / 2;
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.setAttribute(
+            "d",
+            `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2 - 3}`,
+          );
+          path.setAttribute("marker-end", "url(#arrow)");
+          path.setAttribute(
+            "class",
+            `edge-line ${edge.ambiguous ? "ambiguous" : ""} ${
+              highlighted ? "highlighted" : ""
+            }`,
+          );
+          path.style.opacity = visible ? "1" : "0";
+          svg.appendChild(path);
+
+          if (edge.pill !== false) {
+            const pill = document.createElement("button");
+            pill.type = "button";
+            pill.dataset.edgeId = edge.id;
+            pill.title = `${source.title} / ${target.title}`;
+            pill.className = `edge-pill ${visible ? "visible" : ""} ${
+              highlighted ? "highlighted" : ""
+            }`;
+            pill.textContent = edge.label;
+            pill.style.left = `${(x1 + x2) / 2 - 32.5 + (edge.pillShiftX || 0)}px`;
+            pill.style.top = `${midY - 8 + (edge.pillShiftY || 0)}px`;
+            pill.addEventListener("click", () => openDetails("edge", edge.id));
+            stage.appendChild(pill);
+          }
+        }
+
+        nodes.forEach((node, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.dataset.nodeId = node.id;
+          button.title = node.title;
+          button.className = `map-node ${index < visibleCount ? "visible" : ""} ${
+            focusedIds.has(node.id) ? "focused" : ""
+          } ${
+            highlightedIds.has(node.id) ? "highlighted" : ""
+          }`;
+          button.style.left = `${node.x}px`;
+          button.style.top = `${node.y * mapYScale}px`;
+          button.textContent = node.title;
+          button.addEventListener("click", () => openDetails("node", node.id));
+          stage.appendChild(button);
+        });
+
+        document.getElementById("map-empty").classList.toggle("hidden", visibleCount > 0);
+        document.getElementById("live-pill").textContent =
+          visibleCount > 0 ? `${visibleCount} sections` : "building";
+        renderFocusChips();
+      }
+
+      function renderFocusChips() {
+        const container = document.getElementById("focus-chips");
+        container.innerHTML = "";
+        graphs[currentGraph].slice(0, Math.max(0, visibleCount)).forEach((node) => {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = `chip ${focusedIds.has(node.id) ? "selected" : ""}`;
+          chip.dataset.nodeId = node.id;
+          chip.textContent = node.title;
+          chip.addEventListener("click", () => {
+            if (focusedIds.has(node.id)) {
+              focusedIds.delete(node.id);
+            } else {
+              focusedIds.add(node.id);
+            }
+            renderGraph();
+          });
+          container.appendChild(chip);
+        });
+      }
+
+      function openDetails(kind, id) {
+        document.getElementById("map-view").classList.add("hidden");
+        document.getElementById("back-btn").classList.add("open");
+        const details = document.getElementById("details");
+        details.classList.add("open");
+        let title;
+        let summary;
+        let points;
+        let type;
+        if (kind === "node") {
+          const node = nodeById(id);
+          title = node.title;
+          summary = node.summary;
+          points = node.points;
+          type = "Section note";
+        } else {
+          const edge = graphEdges.find((item) => item.id === id);
+          const source = nodeById(edge.source);
+          const target = nodeById(edge.target);
+          title = `${source.title} / ${target.title}`;
+          summary =
+            edge.summary ||
+            `${source.title} ${edge.label} ${target.title}. This bridge preserves the relationship and the evidence used to infer it.`;
+          points = [
+            `Connects ${source.title} to ${target.title}`,
+            "Keeps relationship provenance visible",
+          ];
+          type = "Cross-section note";
+        }
+        details.innerHTML = `
+          <div class="detail-head">
+            <div>
+              <div class="detail-title">${title}</div>
+              <div class="detail-kind">${type}</div>
+            </div>
+            <span class="confidence">evidence-backed</span>
+          </div>
+          <p class="detail-summary">${summary}</p>
+          <div class="detail-section-title">KEY POINTS</div>
+          <ul class="detail-list">${points.map((point) => `<li>${point}</li>`).join("")}</ul>
+          <div class="detail-section-title">${kind === "edge" ? "RELATION" : "CLAIMS"}</div>
+          ${
+            kind === "edge"
+              ? `<table class="relation-table">
+                  <thead><tr><th>From</th><th>Relation</th><th>To</th></tr></thead>
+                  <tbody><tr><td>${title.split(" / ")[0]}</td><td>${
+                    graphEdges.find((item) => item.id === id).label
+                  }</td><td>${title.split(" / ")[1]}</td></tr></tbody>
+                </table>`
+              : `<ul class="detail-list">
+                  <li>The note is reusable in later questions and Memory Mode.</li>
+                  <li>Supporting evidence remains attached to the section.</li>
+                </ul>`
+          }
+        `;
+        reportScroll.scrollTop = 0;
+      }
+
+      document.getElementById("back-btn").addEventListener("click", () => {
+        document.getElementById("map-view").classList.remove("hidden");
+        document.getElementById("back-btn").classList.remove("open");
+        document.getElementById("details").classList.remove("open");
+        reportScroll.scrollTop = 0;
+      });
+
+      function bubble(content, className = "") {
+        const element = document.createElement("article");
+        element.className = `bubble ${className}`;
+        element.innerHTML = content;
+        messages.appendChild(element);
+        messages.scrollTop = messages.scrollHeight;
+        return element;
+      }
+
+      function showAnswerLoading() {
+        const old = document.getElementById("answer-loading");
+        old?.remove();
+        const element = bubble(
+          '<div class="loading-row"><span class="spinner"></span><strong>Notipala is grounding the answer...</strong></div>',
+          "answer",
+        );
+        element.id = "answer-loading";
+      }
+
+      function setAnswerReady(kind = "question") {
+        document.getElementById("answer-loading")?.remove();
+        const answer =
+          kind === "follow"
+            ? "When facts change every week, <strong>RAG is usually the better default</strong>. It refreshes evidence without retraining, while fine-tuning remains valuable for stable behavior and domain style."
+            : "<strong>RAG and fine-tuning solve different problems.</strong> RAG retrieves fresh, source-backed context at answer time; fine-tuning changes model behavior and specialized knowledge through parameter updates.";
+        const element = bubble(
+          `<div class="answer-head"><span class="answer-name">Notipala</span><span class="status-badge">complete</span></div>
+           <div>${answer}</div>
+           <button class="evidence-toggle" id="evidence-toggle" type="button"><span>◉ &nbsp;Evidence · 4 sources</span><span>⌄</span></button>
+           <div class="evidence" id="evidence">
+             <div class="source-card"><strong>[E1] Retrieval freshness</strong><br/>External indexes can be refreshed independently from model parameters.</div>
+             <div class="source-card"><strong>[E2] Parameter updates</strong><br/>Fine-tuning is durable, but newly published facts require another training cycle.</div>
+           </div>`,
+          "answer",
+        );
+        const toggle = element.querySelector("#evidence-toggle");
+        toggle.addEventListener("click", () => {
+          evidenceState.open = !evidenceState.open;
+          element.querySelector("#evidence").classList.toggle("open", evidenceState.open);
+          toggle.querySelector("span:last-child").textContent = evidenceState.open ? "⌃" : "⌄";
+        });
+      }
+
+      sendButton.addEventListener("click", () => {
+        const text = composerInput.value.trim();
+        if (!text) return;
+        bubble(text, "user");
+        composerInput.value = "";
+        showAnswerLoading();
+        if (scenario === "follow") {
+          document.getElementById("updating").classList.add("open");
+        }
+      });
+
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files?.[0];
+        if (!file) return;
+        bubble(
+          `Uploaded <strong>${file.name}</strong><br/><span style="color:#6a8392">Reading the document while preserving sources...</span>`,
+          "answer",
+        );
+        document.getElementById("updating").classList.add("open");
+        document.getElementById("updating-copy").textContent =
+          "Uploaded file validated — Section Map is building in the background.";
+      });
+
+      document.getElementById("ask-map-btn").addEventListener("click", () => {
+        document.getElementById("memory-result").classList.add("open");
+        document.getElementById("reason-path").classList.add("open");
+      });
+
+      function showToast(message) {
+        document.getElementById("toast-copy").textContent = message;
+        document.getElementById("toast").classList.add("open");
+      }
+
+      function hideToast() {
+        document.getElementById("toast").classList.remove("open");
+      }
+
+      function revealNodes(count) {
+        visibleCount = Math.max(0, Math.min(graphs[currentGraph].length, count));
+        renderGraph();
+      }
+
+      function setHighlights(ids) {
+        highlightedIds = new Set(ids);
+        renderGraph();
+      }
+
+      function setMapYScale(scale) {
+        mapYScale = Math.max(0.75, Math.min(1, Number(scale) || 1));
+        renderGraph();
+      }
+
+      function startBuilding(copy = "Graph report updating — Section notes are rebuilding.") {
+        document.getElementById("updating-copy").textContent = copy;
+        document.getElementById("updating").classList.add("open");
+        document.getElementById("empty-title").textContent = "Building connected Section notes";
+        document.getElementById("live-pill").textContent = "building";
+      }
+
+      function finishBuilding() {
+        document.getElementById("updating").classList.remove("open");
+        document.getElementById("live-pill").textContent = `${visibleCount} sections`;
+      }
+
+      function setCursor(x, y) {
+        const cursor = document.getElementById("demo-cursor");
+        cursor.style.left = `${x}px`;
+        cursor.style.top = `${y}px`;
+      }
+
+      function cursorClick() {
+        const cursor = document.getElementById("demo-cursor");
+        cursor.classList.remove("clicking");
+        void cursor.offsetWidth;
+        cursor.classList.add("clicking");
+        setTimeout(() => cursor.classList.remove("clicking"), 460);
+      }
+
+      function setSessions(items) {
+        const container = document.getElementById("sessions");
+        container.innerHTML = items
+          .map(
+            (item, index) => `
+              <div class="session ${index === 0 ? "active" : ""}">
+                <div class="session-title"><span class="session-dot"></span>${item.title}</div>
+                <p class="session-preview">${item.preview}</p>
+              </div>`,
+          )
+          .join("");
+      }
+
+      function setupScenario() {
+        const baseSessions = [
+          {
+            title: "How should production AI stay current?",
+            preview: "RAG, fine-tuning, source trust, and citation verification",
+          },
+          {
+            title: "Uploaded: research-pack.md",
+            preview: "Structured document memory with connected sections",
+          },
+          {
+            title: "Evaluation notes",
+            preview: "Answer quality, freshness, latency, and evidence coverage",
+          },
+        ];
+        setSessions(baseSessions);
+
+        if (scenario === "upload") {
+          currentGraph = "upload";
+          document.getElementById("chat-title").textContent = "Uploaded: research-pack.md";
+          messages.innerHTML =
+            '<article class="bubble answer">Bring your own sources into the workspace. Notipala will preserve provenance while building a reusable Section Map.</article>';
+          visibleCount = 0;
+        } else if (scenario === "follow") {
+          document.getElementById("chat-title").textContent =
+            "How should production AI stay current?";
+          messages.innerHTML =
+            '<article class="bubble user">How do RAG and fine-tuning differ for fast-changing knowledge?</article>';
+          setAnswerReady("question");
+          visibleCount = 7;
+        } else if (scenario === "memory") {
+          document.getElementById("chat-title").textContent =
+            "How should production AI stay current?";
+          messages.innerHTML =
+            '<article class="bubble user">How do RAG and fine-tuning differ for fast-changing knowledge?</article>';
+          setAnswerReady("question");
+          visibleCount = 12;
+        } else if (scenario === "details") {
+          document.getElementById("chat-title").textContent =
+            "Explore the evidence-backed Section Map";
+          messages.innerHTML =
+            '<article class="bubble answer"><div class="answer-head"><span class="answer-name">Notipala</span><span class="status-badge">ready</span></div>Every node is a reusable Section note. Every bridge explains how two sections connect.</article>';
+          visibleCount = 12;
+        } else {
+          document.getElementById("chat-title").textContent =
+            "How should production AI stay current?";
+          messages.innerHTML =
+            '<article class="bubble answer">Ask a complete question and Notipala will connect the answer, evidence, and Section Map.</article>';
+          visibleCount = 0;
+        }
+        renderGraph();
+      }
+
+      window.demo = {
+        scenario,
+        setPanelWidth,
+        setAnswerReady,
+        startBuilding,
+        finishBuilding,
+        revealNodes,
+        setHighlights,
+        setMapYScale,
+        showToast,
+        hideToast,
+        setCursor,
+        cursorClick,
+        openDetails,
+        reportScrollTo(value) {
+          reportScroll.scrollTop = value;
+        },
+        getReportScroll() {
+          return reportScroll.scrollTop;
+        },
+        setComposer(value) {
+          composerInput.value = value;
+          composerInput.dispatchEvent(new Event("input", { bubbles: true }));
+        },
+        completeFollowUp() {
+          setAnswerReady("follow");
+        },
+        showMemoryResult() {
+          document.getElementById("memory-result").classList.add("open");
+          document.getElementById("reason-path").classList.add("open");
+        },
+      };
+
+      setupScenario();
+    </script>
+  </body>
+</html>
