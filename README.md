@@ -1,111 +1,76 @@
-# Notipala — Organize Knowledge
+# Notipala
 
-[English](#english) · [繁體中文](#繁體中文) · [简体中文](#简体中文)
+**Organize knowledge. Connect ideas.**
 
----
+<img src="./techstack.svg" alt="Notipala technology stack" width="1300">
 
-## English
+<p align="center">
+    <img src="./icon/Notipala.png" alt="Notipala" width="420">
+</p>
 
-Notipala turns questions and uploaded files into source-backed answers, then organizes the results into an explorable Section Map.
 
-### 1. Ask a question
+[Watch the demo](https://www.youtube.com/watch?v=vcxDGVrb2ko&t=26s) · [Try Notipala](https://notipala.com) 
+## Architecture
 
-Get an answer, inspect its evidence, and watch the Section Map take shape.
+```mermaid
+flowchart LR
+    UI[React workspace] --> API[FastAPI]
+    API --> Research[Budgeted research pipeline]
+    API --> Sources[Uploads · Gmail · Notion]
+    Research --> Graph[Session graph pipeline]
+    Sources --> Graph
+    Graph --> Personal[Personal sections]
+    Graph --> Knowledge[Research sections]
+    Graph --> Pages[Page sections + local graphs]
+    Personal --> Memory[Hybrid retrieval · Memory Mode]
+    Knowledge --> Memory
+    Pages --> Memory
+    Memory --> UI
+```
 
-![Ask a question, inspect evidence, and build a Section Map](demo_screenshot/question-answer-evidence-section-map.gif)
+- **Research:** classify and decompose questions, retrieve and rank evidence, enforce token budgets, then synthesize and evaluate answers.
+- **Knowledge maps:** extract sections and relationships with source evidence; update reports and graph artifacts within each session.
+- **Hosted execution:** PostgreSQL tracks durable jobs; Cloud Tasks dispatches to Cloud Run workers; GCS stores artifacts.
 
-### 2. Upload a file
 
-Add your own material and let Notipala convert it into a structured Section Map.
 
-![Upload a file and build a Section Map](demo_screenshot/upload-file-section-map.gif)
+## Benchmark
 
-### 3. Ask a follow-up
+| Evaluation | Coverage | Measures |
+| --- | --- | --- |
+| MemoryBench: LoCoMo, LongMemEval, ConvoMem | Transcript ingestion and memory retrieval | Answer quality, context usage, and retrieval diagnostics |
+| HotpotQA runner | Multi-hop research answers and supporting evidence | Answer/supporting-fact EM and F1, joint scores, latency, and token usage |
 
-Continue the conversation while the existing context and Section Map evolve with the new answer.
+MemoryBench keeps retrieval closed-book and returns evidence to a separate answering model and judge. Scores depend on the dataset, models, and extraction settings; this README does not claim a validated aggregate result.
 
-![Ask a follow-up and update the Section Map](demo_screenshot/follow-up-section-map.gif)
 
-### 4. Explore in Memory Mode
 
-Ask across saved knowledge, view the reasoning path, and see which sections support the answer.
+## Technology Stack
 
-![Ask in Memory Mode and highlight the reasoning path](demo_screenshot/memory-mode-reason-path-highlights.gif)
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS, shadcn/ui |
+| Backend | Python, FastAPI, Pydantic |
+| Graph and retrieval | Local Graphify package, ChromaDB, MiniLM embeddings, lexical retrieval |
+| Content ingestion | Gmail/Notion APIs, pypdf, Docling/OCR, document parsers |
+| Infrastructure | Firebase Auth, PostgreSQL, GCS, Cloud Tasks, Cloud Run |
+| Search and models | Brave Search, configurable hosted LLMs and Ollama |
 
-### 5. Open node and edge details
+## Key Design Decisions
 
-Select a node to inspect its Section note, or select a bridge to open the related Cross-section note without losing the map context.
+- **Separate Personal and Research.** Events and personal context remain Personal; reusable knowledge becomes Research. Independent extraction and clustering prevent one domain from overwhelming the other.
+- **Preserve source structure.** Gmail messages aggregate by thread. Each Notion page has one global representative and a local Personal/Research graph; a maximum spanning forest organizes display while preserving semantic edges.
+- **Link context selectively.** Personal links use semantic, topic, participant, organization, and thread affinity. Source-derived Personal → Research edges remain separate from linker quotas.
+- **Keep answers traceable.** Sections retain source evidence; Notion code blocks and structured tables keep their format. Hybrid retrieval combines graph, vector, and lexical signals.
+- **Make imports explicit and account-scoped.** OAuth connections are encrypted and isolated per user; users preview and select content before importing.
+- **Bound cost and recover work.** Research has explicit evidence/token budgets. Durable jobs support retries, cancellation, and lease-based recovery; unsafe production configuration fails closed.
 
-![Open Section note and Cross-section note details](demo_screenshot/section-map-node-edge-details.gif)
 
----
 
-## 繁體中文
+## Roadmap
 
-Notipala 將提問與上傳檔案轉化為有來源依據的回答，並把研究結果整理成可探索的 Section Map。
-
-### 1. 提問
-
-取得回答、展開 Evidence，並查看 Section Map 的建立過程。
-
-![提問、展開 Evidence 並建立 Section Map](demo_screenshot/question-answer-evidence-section-map.gif)
-
-### 2. 上傳檔案
-
-加入自己的資料，讓 Notipala 將內容整理成結構化的 Section Map。
-
-![上傳檔案並建立 Section Map](demo_screenshot/upload-file-section-map.gif)
-
-### 3. 追問
-
-延續同一段對話，保留既有脈絡，並隨新回答更新 Section Map。
-
-![追問並更新 Section Map](demo_screenshot/follow-up-section-map.gif)
-
-### 4. 使用 Memory Mode 探索
-
-從既有知識中提問，查看 Reasoning Path，以及支撐回答的高光 Sections。
-
-![在 Memory Mode 提問並高光 Reasoning Path](demo_screenshot/memory-mode-reason-path-highlights.gif)
-
-### 5. 查看 Node 與 Edge 詳情
-
-點擊 Node 查看 Section note，或點擊 Bridge 開啟對應的 Cross-section note，並可隨時返回完整 Section Map。
-
-![查看 Section note 與 Cross-section note 詳情](demo_screenshot/section-map-node-edge-details.gif)
-
----
-
-## 简体中文
-
-Notipala 将提问与上传文件转化为有来源依据的回答，并把研究结果整理成可探索的 Section Map。
-
-### 1. 提问
-
-获取回答、展开 Evidence，并查看 Section Map 的构建过程。
-
-![提问、展开 Evidence 并构建 Section Map](demo_screenshot/question-answer-evidence-section-map.gif)
-
-### 2. 上传文件
-
-加入自己的资料，让 Notipala 将内容整理成结构化的 Section Map。
-
-![上传文件并构建 Section Map](demo_screenshot/upload-file-section-map.gif)
-
-### 3. 追问
-
-延续同一段对话，保留已有上下文，并随新回答更新 Section Map。
-
-![追问并更新 Section Map](demo_screenshot/follow-up-section-map.gif)
-
-### 4. 使用 Memory Mode 探索
-
-从已有知识中提问，查看 Reasoning Path，以及支持回答的高亮 Sections。
-
-![在 Memory Mode 提问并高亮 Reasoning Path](demo_screenshot/memory-mode-reason-path-highlights.gif)
-
-### 5. 查看 Node 与 Edge 详情
-
-点击 Node 查看 Section note，或点击 Bridge 打开对应的 Cross-section note，并可随时返回完整 Section Map。
-
-![查看 Section note 与 Cross-section note 详情](demo_screenshot/section-map-node-edge-details.gif)
+- Complete Gmail restricted-scope verification and validate OAuth onboarding with additional accounts.
+- Add incremental connector sync, webhook/history updates, and deletion reconciliation.
+- Improve extraction coverage, source citation rendering, and page-level retrieval.
+- Publish reproducible benchmark results and add product-level graph/import evaluations.
+- Add distributed per-user rate limits, dashboards, alerts, recovery runbooks, and load/soak tests.

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="176" viewBox="0 0 1200 176" role="img" aria-label="Notipala technology stack">
+  <rect width="1200" height="176" rx="6" fill="#0d1117"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600">
+    <g transform="translate(14 14)">
+      <rect width="74" height="28" rx="4" fill="#30363d"/>
+      <rect x="74" width="82" height="28" rx="4" fill="#61dafb"/>
+      <text x="10" y="18" fill="#f0f6fc">frontend</text>
+      <text x="115" y="18" text-anchor="middle" fill="#07141a">React 19</text>
+    </g>
+    <g transform="translate(190 14)">
+      <rect width="92" height="28" rx="4" fill="#30363d"/>
+      <rect x="92" width="108" height="28" rx="4" fill="#3178c6"/>
+      <text x="10" y="18" fill="#f0f6fc">language</text>
+      <text x="146" y="18" text-anchor="middle" fill="#fff">TypeScript</text>
+    </g>
+    <g transform="translate(410 14)">
+      <rect width="48" height="28" rx="4" fill="#30363d"/>
+      <rect x="48" width="62" height="28" rx="4" fill="#f7df1e"/>
+      <text x="10" y="18" fill="#f0f6fc">build</text>
+      <text x="79" y="18" text-anchor="middle" fill="#111">Vite</text>
+    </g>
+    <g transform="translate(540 14)">
+      <rect width="82" height="28" rx="4" fill="#30363d"/>
+      <rect x="82" width="112" height="28" rx="4" fill="#06b6d4"/>
+      <text x="10" y="18" fill="#f0f6fc">styling</text>
+      <text x="138" y="18" text-anchor="middle" fill="#042f38">Tailwind CSS</text>
+    </g>
+    <g transform="translate(754 14)">
+      <rect width="96" height="28" rx="4" fill="#30363d"/>
+      <rect x="96" width="102" height="28" rx="4" fill="#111827"/>
+      <text x="10" y="18" fill="#f0f6fc">components</text>
+      <text x="147" y="18" text-anchor="middle" fill="#f0f6fc">shadcn/ui</text>
+    </g>
+    <g transform="translate(14 54)">
+      <rect width="74" height="28" rx="4" fill="#30363d"/>
+      <rect x="74" width="78" height="28" rx="4" fill="#3776ab"/>
+      <text x="10" y="18" fill="#f0f6fc">backend</text>
+      <text x="113" y="18" text-anchor="middle" fill="#fff">Python</text>
+    </g>
+    <g transform="translate(186 54)">
+      <rect width="82" height="28" rx="4" fill="#30363d"/>
+      <rect x="82" width="92" height="28" rx="4" fill="#009688"/>
+      <text x="10" y="18" fill="#f0f6fc">API</text>
+      <text x="128" y="18" text-anchor="middle" fill="#fff">FastAPI</text>
+    </g>
+    <g transform="translate(380 54)">
+      <rect width="82" height="28" rx="4" fill="#30363d"/>
+      <rect x="82" width="92" height="28" rx="4" fill="#e2e8f0"/>
+      <text x="10" y="18" fill="#f0f6fc">validation</text>
+      <text x="128" y="18" text-anchor="middle" fill="#111827">Pydantic</text>
+    </g>
+    <g transform="translate(574 54)">
+      <rect width="84" height="28" rx="4" fill="#30363d"/>
+      <rect x="84" width="102" height="28" rx="4" fill="#d97706"/>
+      <text x="10" y="18" fill="#f0f6fc">retrieval</text>
+      <text x="135" y="18" text-anchor="middle" fill="#fff">ChromaDB</text>
+    </g>
+    <g transform="translate(14 94)">
+      <rect width="88" height="28" rx="4" fill="#30363d"/>
+      <rect x="88" width="126" height="28" rx="4" fill="#16a34a"/>
+      <text x="10" y="18" fill="#f0f6fc">connectors</text>
+      <text x="151" y="18" text-anchor="middle" fill="#fff">Gmail / Notion APIs</text>
+    </g>
+    <g transform="translate(248 94)">
+      <rect width="92" height="28" rx="4" fill="#30363d"/>
+      <rect x="92" width="72" height="28" rx="4" fill="#4285f4"/>
+      <text x="10" y="18" fill="#f0f6fc">identity</text>
+      <text x="128" y="18" text-anchor="middle" fill="#fff">Firebase</text>
+    </g>
+    <g transform="translate(432 94)">
+      <rect width="92" height="28" rx="4" fill="#30363d"/>
+      <rect x="92" width="106" height="28" rx="4" fill="#336791"/>
+      <text x="10" y="18" fill="#f0f6fc">database</text>
+      <text x="145" y="18" text-anchor="middle" fill="#fff">PostgreSQL</text>
+    </g>
+    <g transform="translate(650 94)">
+      <rect width="88" height="28" rx="4" fill="#30363d"/>
+      <rect x="88" width="82" height="28" rx="4" fill="#4285f4"/>
+      <text x="10" y="18" fill="#f0f6fc">platform</text>
+      <text x="129" y="18" text-anchor="middle" fill="#fff">GCP</text>
+    </g>
+    <g transform="translate(14 134)">
+      <rect width="82" height="28" rx="4" fill="#30363d"/>
+      <rect x="82" width="110" height="28" rx="4" fill="#ea580c"/>
+      <text x="10" y="18" fill="#f0f6fc">models</text>
+      <text x="137" y="18" text-anchor="middle" fill="#fff">Ollama / LLMs</text>
+    </g>
+    <g transform="translate(226 134)">
+      <rect width="74" height="28" rx="4" fill="#30363d"/>
+      <rect x="74" width="112" height="28" rx="4" fill="#8b5cf6"/>
+      <text x="10" y="18" fill="#f0f6fc">search</text>
+      <text x="130" y="18" text-anchor="middle" fill="#fff">Brave Search</text>
+    </g>
+    <g transform="translate(432 134)">
+      <rect width="94" height="28" rx="4" fill="#30363d"/>
+      <rect x="94" width="108" height="28" rx="4" fill="#64748b"/>
+      <text x="10" y="18" fill="#f0f6fc">documents</text>
+      <text x="148" y="18" text-anchor="middle" fill="#fff">Docling / OCR</text>
+    </g>
+    <g transform="translate(654 134)">
+      <rect width="78" height="28" rx="4" fill="#30363d"/>
+      <rect x="78" width="118" height="28" rx="4" fill="#0891b2"/>
+      <text x="10" y="18" fill="#f0f6fc">deploy</text>
+      <text x="137" y="18" text-anchor="middle" fill="#fff">Cloud Run</text>
+    </g>
+  </g>
+</svg>
