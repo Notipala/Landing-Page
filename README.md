@@ -51,7 +51,7 @@ MemoryBench keeps retrieval closed-book and returns evidence to a separate answe
 | --- | --- |
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS, shadcn/ui |
 | Backend | Python, FastAPI, Pydantic |
-| Graph and retrieval | Local Graphify package, ChromaDB, MiniLM embeddings, lexical retrieval |
+| Graph and retrieval | ChromaDB, MiniLM embeddings, lexical retrieval |
 | Content ingestion | Gmail/Notion APIs, pypdf, Docling/OCR, document parsers |
 | Infrastructure | Firebase Auth, PostgreSQL, GCS, Cloud Tasks, Cloud Run |
 | Search and models | Brave Search, configurable hosted LLMs and Ollama |
